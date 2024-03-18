@@ -6,6 +6,7 @@ public class School
 {
     [Excel(Name = "School Name")]
     public string Name { get; set; }
+    [Excel(Name = "Director")]
     public string SchoolDirector { get; set; }
     
 }

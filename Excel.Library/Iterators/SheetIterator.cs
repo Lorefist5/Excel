@@ -27,6 +27,14 @@ public class SheetIterator : IDisposable
         _currentColumn = firstColumn;
         CurrentRow = firstRow;
     }
+    public SheetIterator(SheetInfo sheetInfo)
+    {
+        _firstRow = sheetInfo.FirstRow;
+        _firstColumn = sheetInfo.FirstColumn;
+        _excelWorksheet = sheetInfo.WorkSheet;
+        _currentColumn = sheetInfo.FirstColumn;
+        CurrentRow = sheetInfo.FirstRow;
+    }
     public object? this[int row, int column]
     {
         get
@@ -102,11 +110,15 @@ public class SheetIterator : IDisposable
 
     public object? GetCurrentValue()
     {
-        return _excelWorksheet.Cells[CurrentRow, CurrentColumn].Value;
+        return _excelWorksheet.Cells[CurrentRow, CurrentColumn]?.Value;
     }
     public string? GetCurrentHeader()
     {
         return _excelWorksheet.Cells[_firstRow, CurrentColumn].Value?.ToString();
+    }
+    public ExcelRange GetCurrentCell()
+    {
+        return _excelWorksheet.Cells[CurrentRow, CurrentColumn];
     }
     public SheetIterator NextRow()
     {
@@ -159,8 +171,6 @@ public class SheetIterator : IDisposable
                 // Dispose managed resources.
                 // Note: ExcelWorksheet is assumed to be managed and should be disposed of by its own library unless explicitly required.
             }
-
-
             _disposed = true;
         }
     }

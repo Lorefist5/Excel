@@ -8,7 +8,7 @@ public class Student
     public string Name { get; set; } = default!;
     public int Age { get; set; }
     [Excel(DefaultValue = "No address")]
-    public string Address { get; set; }
-    [Excel(IsProperty = false)]
+    public string? Address { get; set; }
+    [Excel(IsReadProperty = false)]
     public bool IsAbove18 { get => Age > 18; }
 }
