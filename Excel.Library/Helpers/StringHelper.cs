@@ -4,7 +4,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace Excel.Library.Helpers;
 
-public class StringHelper
+public static class StringHelper
 {
     public static string RemoveIgnoreCases(string value,IEnumerable<string> ignoreCases, bool caseSensitive)
     {
@@ -16,6 +16,15 @@ public class StringHelper
             }
         }
         return value;
+    }
+    public static string RemoveSubstrings(this string mainString, IEnumerable<string> substringsToRemove)
+    {
+        foreach (var substring in substringsToRemove)
+        {
+            mainString = mainString.Replace(substring, "");
+        }
+
+        return mainString;
     }
     public static string ConvertToCaseStyle(string input, CaseStyle caseStyle, bool removeWhiteSpace = false)
     {

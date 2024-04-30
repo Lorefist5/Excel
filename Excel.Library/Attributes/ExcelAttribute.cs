@@ -25,6 +25,9 @@ public class ExcelAttribute : Attribute
     public string[]? IgnoreCases { get; set; } //Ignores some cases, if you put "Los" or "The" it will delete themm ex. Los Santos will be = to Santos
     public string[]? ReadingProperties { get; set; } // When searching for the columns in the excel it will also check for all these properties
     public CaseStyle CaseStyle { get; set; } = CaseStyle.Default; //In what case style it will be written
+    public string[]? IgnoreHeaderCases { get; set; }
+    public TrimMode TrimMode { get; set; } = TrimMode.FrontAndEnd;
+    public Type Type { get; set; } = typeof(string);
     public static List<ExcelProperty> GetExcelReadingProperties<T>() where T : class
     {
         List<PropertyInfo> properties = typeof(T).GetProperties().ToList();

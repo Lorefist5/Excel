@@ -1,8 +1,10 @@
 ﻿using Excel.Library.Attributes;
+using Excel.Library.Enums;
 using Excel.Library.Helpers;
 using Excel.Library.Iterators;
 using Excel.Library.Models;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Excel.Library;
 
@@ -90,19 +92,44 @@ public partial class ExcelLib
             string? attributeName = excelAttribute?.Name;
             List<string>? readingProperties = excelAttribute?.ReadingProperties?.ToList();
             bool caseSensitive = excelAttribute?.CaseSensitive ?? false;
+            TrimMode trimMode = excelAttribute != null ? excelAttribute.TrimMode : TrimMode.FrontAndEnd;
+
+            if(trimMode == TrimMode.FrontAndEnd)
+            {
+                columnName = columnName.Trim();
+                
+            }
+            else if (trimMode == TrimMode.Front)
+            {
+                columnName.TrimStart();
+            }
+            else if(trimMode == TrimMode.End)
+            {
+                columnName.TrimEnd();
+            }
+            else if(trimMode == TrimMode.All)
+            {
+                columnName = columnName.Replace(" ", "");
+            }
+
+            if (excelAttribute != null && excelAttribute.IgnoreHeaderCases != null && excelAttribute.IgnoreHeaderCases.Count() != 0)
+            {
+                columnName = columnName.RemoveSubstrings(excelAttribute.IgnoreHeaderCases);
+            }
+
 
             if (caseSensitive)
             {
-                bool namePropertyDecected = 
+                bool namePropertyDetected = 
                 p.Property.Name.Equals(columnName, StringComparison.Ordinal) || 
                 attributeName?.Equals(columnName, StringComparison.Ordinal) == true;
 
-                if(!namePropertyDecected && readingProperties != null)
+                if(!namePropertyDetected && readingProperties != null)
                 {
                     return readingProperties.Contains(columnName);
                 }
 
-                return namePropertyDecected;
+                return namePropertyDetected;
             }
             else
             {

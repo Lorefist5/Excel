@@ -3,6 +3,7 @@ using Excel.Library.Helpers;
 using Excel.Library.Iterators;
 using Excel.Library.Models;
 using OfficeOpenXml;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace Excel.Library;
@@ -11,7 +12,7 @@ public partial class ExcelLib
 {
     public void WriteDataFrame<T>(List<T> data, string sheetName = "Sheet1",int firstRow = 1, int firstColumn = 1, bool replaceCurrentSheet = true) where T : class
     {
-        if (replaceCurrentSheet)
+        if (replaceCurrentSheet && SheetExists(_excelPackage,sheetName))
         {
             _excelPackage.Workbook.Worksheets.Delete(sheetName);
         }
@@ -69,13 +70,35 @@ public partial class ExcelLib
             iterator.GetCurrentCell().Value = excelAttributes.DefaultValue;
             return;
         }
+        if (excelAttributes.Type != null && value != null)
+        {
+            Type targetType = excelAttributes.Type;
+            try
+            {
+                // Attempt to convert value to the specified type.
+                TypeConverter converter = TypeDescriptor.GetConverter(targetType);
+                if (converter.CanConvertFrom(value.GetType()))
+                {
+                    var convertedValue = converter.ConvertFrom(value);
+                    iterator.GetCurrentCell().Value = convertedValue;
+                    return;
+                }
+            }
+            catch
+            {
+            }
+        }
+
         if (value is string stringValue)
         {
             stringValue = StringHelper.ConvertToCaseStyle(stringValue, excelAttributes.CaseStyle);
             iterator.GetCurrentCell().Value = stringValue;
             return;
         }
-        iterator.GetCurrentCell().Value = value;
+
+
+
+        iterator.GetCurrentCell().Value = value?.ToString() ?? value;
     }
     
 }
