@@ -16,6 +16,7 @@ public partial class ExcelLib
     }
     public void ChangeExcel(string path)
     {
+        _excelPackage = new ExcelPackage(path);
         _excelPath = EnsureCorrectExtension(path);
     }
     public void SaveAs(string newPath)
