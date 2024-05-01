@@ -54,7 +54,7 @@ public class SheetIterator : IDisposable
             int nullHeadersCount = 0;
             object? currentValue = sheetIterator.GetCurrentValue();
             if (currentValue == null) nullHeadersCount++;
-            while (sheetIterator.GetCurrentValue() != null && nullHeadersCount >= _ignoreHeaderCount)
+            while (sheetIterator.GetCurrentValue() != null && nullHeadersCount < _ignoreHeaderCount)
             {
                 string? currentHeaderCellValue = sheetIterator.GetCurrentValue()!.ToString();
                 action(currentHeaderCellValue, sheetIterator.CurrentColumn);
