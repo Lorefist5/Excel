@@ -13,7 +13,6 @@ public class SheetIterator : IDisposable
     private int _currentColumn;
     //State of whether this class has been disposed off
     private bool _disposed = false;
-    private int _ignoreHeaderCount = Defaults.IgnoreHeaderCount;
     private readonly ExcelWorksheet _excelWorksheet;
 
     public int CurrentColumn { get => _currentColumn; private set => _currentColumn = value; }
@@ -52,12 +51,18 @@ public class SheetIterator : IDisposable
         try
         {
             int nullHeadersCount = 0;
-            object? currentValue = sheetIterator.GetCurrentValue();
-            if (currentValue == null) nullHeadersCount++;
-            while (sheetIterator.GetCurrentValue() != null && nullHeadersCount < _ignoreHeaderCount)
+            
+            while (nullHeadersCount <= Defaults.IgnoreHeaderCount)
             {
-                string? currentHeaderCellValue = sheetIterator.GetCurrentValue()!.ToString();
-                action(currentHeaderCellValue, sheetIterator.CurrentColumn);
+                var value = sheetIterator.GetCurrentValue();
+                if (value == null) nullHeadersCount++;
+                else
+                {
+                    nullHeadersCount = 0;
+                    string? currentHeaderCellValue = sheetIterator.GetCurrentValue()!.ToString();
+                    action(currentHeaderCellValue, sheetIterator.CurrentColumn);
+                    
+                }
                 sheetIterator.NextColumn();
             }
         }
@@ -68,42 +73,43 @@ public class SheetIterator : IDisposable
     }
     public void ForEachRow(Action<List<RowValue?>> action)
     {
-        List<string> headers = new List<string>();
+        Dictionary<int,string> headers = new ();
         ForEachHeader((header, currentColumn) =>
         {
-            headers.Add(header);
+            headers.Add(currentColumn,header);
         });
 
         SheetIterator sheetIterator = new SheetIterator(_firstRow + 1, _firstColumn, _excelWorksheet);
         try
         {
-            bool allColumnsNull;
+            int nullRowsCount = 0;
+            
             do
             {
-                allColumnsNull = true; // Assume all columns are null until proven otherwise
+                nullRowsCount++;
                 List<RowValue?> rowData = new List<RowValue?>();
 
-                for (int column = _firstColumn; column < _firstColumn + headers.Count; column++)
+                foreach(var header in headers)
                 {
-                    sheetIterator.CurrentColumn = column; 
+                    sheetIterator.CurrentColumn = header.Key; 
                     object? cellValue = sheetIterator.GetCurrentValue();
-                    string? currentHeaderCellValue = this[_firstRow, column]!.ToString();
+                    string? currentHeaderCellValue = this[_firstRow, header.Key]!.ToString();
                     rowData.Add(new RowValue() { HeaderValue = currentHeaderCellValue, Value = cellValue});
 
                     if (cellValue != null)
                     {
-                        allColumnsNull = false;
+                        nullRowsCount = 0;
                     }
                 }
 
-                if (!allColumnsNull)
+                if (nullRowsCount == 0) // Means that the row wasn't fully null
                 {
                     action(rowData);
                 }
 
                 sheetIterator.NextRow(); 
             }
-            while (!allColumnsNull);
+            while (nullRowsCount <= Defaults.IgnoreLastRowCount);
         }
         finally
         {

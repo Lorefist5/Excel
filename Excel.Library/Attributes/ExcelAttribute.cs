@@ -22,7 +22,7 @@ public class ExcelAttribute : Attribute
     }
     public object? DefaultValue { get; set; } // If the value that is being written or being read is null it will replace it with this
     public bool CaseSensitive { get; set; } = true; // If the CaseSensitive is off it will read the columns without caring for the case
-    public string[]? IgnoreCases { get; set; } //Ignores some cases, if you put "Los" or "The" it will delete themm ex. Los Santos will be = to Santos
+    public string[]? IgnoreCases { get; set; } //Ignores some cases, if you put "Los" or "The" it will delete themm ex. Los Santos will be = Santos
     public string[]? ReadingProperties { get; set; } // When searching for the columns in the excel it will also check for all these properties
     public CaseStyle CaseStyle { get; set; } = CaseStyle.Default; //In what case style it will be written
     public string[]? IgnoreHeaderCases { get; set; }
