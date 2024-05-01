@@ -23,7 +23,7 @@ public abstract class ExcelDataModel
             {
 
                 var value = property.GetValue(this);
-                if(value == null && !IsNullable(property)) return false;
+                if(value == null && !excelAttributes.CanBeNull) return false;
 
                 if (value != null && !TryConvert(value, excelAttributes.Type))
                 {
@@ -53,11 +53,5 @@ public abstract class ExcelDataModel
 
         return false;
     }
-    private bool IsNullable(PropertyInfo property)
-    {
-        if (!property.PropertyType.IsValueType)
-            return true; // All reference types are nullable
-        else
-            return Nullable.GetUnderlyingType(property.PropertyType) != null; // Check for Nullable<T>
-    }
+
 }

@@ -27,6 +27,7 @@ public class ExcelAttribute : Attribute
     public CaseStyle CaseStyle { get; set; } = CaseStyle.Default; //In what case style it will be written
     public string[]? IgnoreHeaderCases { get; set; }
     public TrimMode TrimMode { get; set; } = TrimMode.FrontAndEnd;
+    public bool CanBeNull { get; set; } = false;
     public Type Type { get; set; } = typeof(string);
     public static List<ExcelProperty> GetExcelReadingProperties<T>() where T : class
     {
