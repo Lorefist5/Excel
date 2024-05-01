@@ -9,7 +9,7 @@
     <Description>Read excel packages with Static classes</Description>
     <PackageId>StaticExcel</PackageId>
     <Authors>Lorefist</Authors>
-    <Version>1.1.0</Version>
+    <Version>1.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

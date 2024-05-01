@@ -15,7 +15,7 @@ public abstract class ExcelDataModel
         {
             var excelAttributes = property.GetCustomAttribute<ExcelAttribute>();
             // If there's no ExcelAttribute, continue to the next property
-            if (excelAttributes == null)
+            if (excelAttributes == null || excelAttributes.IsProperty != true)
                 continue;
 
             
