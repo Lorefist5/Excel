@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Excel.Library\Excel.Library.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Inputs\" />
+  </ItemGroup>
+
 </Project>
