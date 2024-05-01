@@ -13,7 +13,7 @@ public class SheetIterator : IDisposable
     private int _currentColumn;
     //State of whether this class has been disposed off
     private bool _disposed = false;
-
+    private int _ignoreHeaderCount = Defaults.IgnoreHeaderCount;
     private readonly ExcelWorksheet _excelWorksheet;
 
     public int CurrentColumn { get => _currentColumn; private set => _currentColumn = value; }
@@ -51,7 +51,10 @@ public class SheetIterator : IDisposable
         SheetIterator sheetIterator = new SheetIterator(_firstRow, _firstColumn, _excelWorksheet);
         try
         {
-            while (sheetIterator.GetCurrentValue() != null)
+            int nullHeadersCount = 0;
+            object? currentValue = sheetIterator.GetCurrentValue();
+            if (currentValue == null) nullHeadersCount++;
+            while (sheetIterator.GetCurrentValue() != null && nullHeadersCount >= _ignoreHeaderCount)
             {
                 string? currentHeaderCellValue = sheetIterator.GetCurrentValue()!.ToString();
                 action(currentHeaderCellValue, sheetIterator.CurrentColumn);
