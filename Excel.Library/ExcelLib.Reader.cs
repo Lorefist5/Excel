@@ -17,8 +17,8 @@ public partial class ExcelLib
         List<ExcelProperty> properties = ExcelAttribute.GetExcelReadingProperties<T>();
         List<T> results = new List<T>();
         var worksheet = _excelPackage.Workbook.Worksheets[sheetName];
-        
-        using(SheetIterator sheetIterator = new SheetIterator(firstRow, firstColumn, worksheet))
+        SheetInfo sheetInfo = new SheetInfo(firstRow,firstColumn, IgnoreHeaderCount, IgnoreLastRowCount,worksheet);
+        using(SheetIterator sheetIterator = new SheetIterator(sheetInfo))
         {
             sheetIterator.ForEachRow((rowValue) =>
             {

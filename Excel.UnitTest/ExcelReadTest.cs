@@ -1,5 +1,5 @@
 using Excel.UnitTest.Enviroments;
-using System.Security.Cryptography.X509Certificates;
+
 
 namespace Excel.UnitTest;
 
@@ -10,43 +10,66 @@ public class ExcelReadTest
     [TestMethod]
     public void TestRowSpacing()
     {
-        Defaults.IgnoreHeaderCount = 3;
+
         var inputFolder = Enviroment.InputFolderPath;
 
         var excelLib = new ExcelLib(Path.Combine(inputFolder, "HeaderCountTest.xlsx"));
-
+        excelLib.IgnoreHeaderCount = 3;
         var firstDataFrame = excelLib.ReadDataFrame<Patient>();
         var secondDataFrame = excelLib.ReadDataFrame<Patient>(firstRow: 10);
 
         Assert.AreEqual(firstDataFrame.Count, secondDataFrame.Count, "The number of students should match.");
-        for (int i = 0; i < firstDataFrame.Count; i++)
-        {
-            Assert.AreEqual(firstDataFrame[i].PatientName, secondDataFrame[i].PatientName, "Patient names should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientAddress, secondDataFrame[i].PatientAddress, "Patient addresses should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientAge, secondDataFrame[i].PatientAge, "Patient ages should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientNumber, secondDataFrame[i].PatientNumber, "Patient phone numbers should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientId, secondDataFrame[i].PatientId, "Patient IDs should match.");
-        } 
+        firstDataFrame.Should().HaveCount(secondDataFrame.Count, because: "the number of patients should match in both data frames.");
+        firstDataFrame.Should().BeEquivalentTo(secondDataFrame, options => options.ComparingByMembers<Patient>(), because: "all patient details should match.");
     }
     [TestMethod]
     public void TestColumnSpacing()
     {
-        Defaults.IgnoreLastRowCount = 5;
+        List<Patient> patients = new List<Patient>
+        {
+            new Patient
+            {
+                PatientId = "ID001",
+                PatientName = "John Doe",
+                PatientAddress = "123 Main St",
+                PatientAge = 25,
+                PatientNumber = "555-1234",
+            },
+            new Patient
+            {
+                PatientId = "ID002",
+                PatientName = "Jane Smith",
+                PatientAddress = "456 Elm St",
+                PatientAge = 30,
+                PatientNumber = "555-5678",
+            },
+            new Patient
+            {
+                PatientId = "ID003",
+                PatientName = "Alice Johnson",
+                PatientAddress = "No address",
+                PatientAge = 17,
+                PatientNumber = "555-9012"
+            },
+            new Patient
+            {
+                PatientId = "ID003", 
+                PatientName = "Alice Johnson",
+                PatientAddress = "No address",
+                PatientAge = 17,
+                PatientNumber = "555-9012"
+            }
+        };
+
+
         var inputFolder = Enviroment.InputFolderPath;
 
-        var excelLib = new ExcelLib(Path.Combine(inputFolder, "RowSpacingTest.xlsx"));
-
+        var excelLib = new ExcelLib(Path.Combine(inputFolder, "RowSpacingTest"));
+        excelLib.IgnoreLastRowCount = 5;
         var firstDataFrame = excelLib.ReadDataFrame<Patient>();
-        var secondDataFrame = excelLib.ReadDataFrame<Patient>(firstRow: 10);
 
-        Assert.AreEqual(firstDataFrame.Count, secondDataFrame.Count, "The number of students should match.");
-        for (int i = 0; i < firstDataFrame.Count; i++)
-        {
-            Assert.AreEqual(firstDataFrame[i].PatientName, secondDataFrame[i].PatientName, "Patient names should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientAddress, secondDataFrame[i].PatientAddress, "Patient addresses should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientAge, secondDataFrame[i].PatientAge, "Patient ages should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientNumber, secondDataFrame[i].PatientNumber, "Patient phone numbers should match.");
-            Assert.AreEqual(firstDataFrame[i].PatientId, secondDataFrame[i].PatientId, "Patient IDs should match.");
-        }
+        Assert.AreEqual(firstDataFrame.Count, patients.Count, "The number of students should match.");
+        firstDataFrame.Should().HaveCount(patients.Count, because: "the number of patients should match in both data frames.");
+        firstDataFrame.Should().BeEquivalentTo(patients, options => options.ComparingByMembers<Patient>(), because: "all patient details should match.");
     }
 }

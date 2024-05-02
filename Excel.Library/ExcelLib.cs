@@ -8,11 +8,24 @@ public partial class ExcelLib
 {
     private string _excelPath;
     private ExcelPackage _excelPackage;
+    private int _ignoreHeaderCount;
+    private int _ignoreLastRowCount;
+    public int IgnoreHeaderCount
+    {
+        get => _ignoreHeaderCount;
+        set => _ignoreHeaderCount = value <= 0 ? 1 : value;
+    }
+    public int IgnoreLastRowCount
+    {
+        get => _ignoreLastRowCount;
+        set => _ignoreLastRowCount = value <= 0 ? 1 : value;
+    }
+
     public ExcelLib(string excelPath)
     {
         this._excelPath = EnsureCorrectExtension(excelPath);
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        _excelPackage = new ExcelPackage(excelPath);
+        _excelPackage = new ExcelPackage(_excelPath);
     }
     public void ChangeExcel(string path)
     {

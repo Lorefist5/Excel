@@ -21,7 +21,7 @@ public partial class ExcelLib
         
         List<ExcelProperty> headers = ExcelAttribute.GetExcelWritingProperties<T>();
         ExcelWorksheet sheet = _excelPackage.Workbook.Worksheets[sheetName];
-        SheetInfo sheetInfo = new SheetInfo(firstRow,firstColumn,sheet);
+        SheetInfo sheetInfo = new SheetInfo(firstRow,firstColumn, IgnoreHeaderCount, IgnoreLastRowCount,sheet);
         WriteHeaders(headers, sheetInfo);
         WriteBody(data,headers,sheetInfo);
     }

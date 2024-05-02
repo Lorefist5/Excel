@@ -11,27 +11,24 @@ public class SheetIterator : IDisposable
     private int _firstColumn;
     private int _currentRow;
     private int _currentColumn;
+    private int _ignoreLastRowCount { get; }
+    private int _ignoreHeaderCount { get; }
     //State of whether this class has been disposed off
     private bool _disposed = false;
+
     private readonly ExcelWorksheet _excelWorksheet;
 
     public int CurrentColumn { get => _currentColumn; private set => _currentColumn = value; }
     public int CurrentRow { get => _currentRow; private set => _currentRow = value; }
-
-    public SheetIterator(int firstRow, int firstColumn, ExcelWorksheet excelWorksheet)
-    {
-        _firstRow = firstRow;
-        _firstColumn = firstColumn;
-        _excelWorksheet = excelWorksheet;
-        _currentColumn = firstColumn;
-        CurrentRow = firstRow;
-    }
     public SheetIterator(SheetInfo sheetInfo)
     {
         _firstRow = sheetInfo.FirstRow;
         _firstColumn = sheetInfo.FirstColumn;
         _excelWorksheet = sheetInfo.WorkSheet;
         _currentColumn = sheetInfo.FirstColumn;
+        _ignoreHeaderCount = sheetInfo.IgnoreHeaderCount;
+        _ignoreLastRowCount = sheetInfo.IgnoreLastRowCount;
+
         CurrentRow = sheetInfo.FirstRow;
     }
     public object? this[int row, int column]
@@ -47,12 +44,13 @@ public class SheetIterator : IDisposable
     }
     public void ForEachHeader(Action<string,int> action)
     {
-        SheetIterator sheetIterator = new SheetIterator(_firstRow, _firstColumn, _excelWorksheet);
+        SheetInfo sheetInfo = new SheetInfo(_firstRow, _firstColumn, _ignoreHeaderCount, _ignoreLastRowCount,_excelWorksheet);
+        SheetIterator sheetIterator = new SheetIterator(sheetInfo);
         try
         {
             int nullHeadersCount = 0;
             
-            while (nullHeadersCount <= Defaults.IgnoreHeaderCount)
+            while (nullHeadersCount <= _ignoreHeaderCount)
             {
                 var value = sheetIterator.GetCurrentValue();
                 if (value == null) nullHeadersCount++;
@@ -78,8 +76,8 @@ public class SheetIterator : IDisposable
         {
             headers.Add(currentColumn,header);
         });
-
-        SheetIterator sheetIterator = new SheetIterator(_firstRow + 1, _firstColumn, _excelWorksheet);
+        SheetInfo sheetInfo = new SheetInfo(_firstRow + 1, _firstColumn,_ignoreHeaderCount,_ignoreLastRowCount ,_excelWorksheet);
+        SheetIterator sheetIterator = new SheetIterator(sheetInfo);
         try
         {
             int nullRowsCount = 0;
@@ -109,7 +107,7 @@ public class SheetIterator : IDisposable
 
                 sheetIterator.NextRow(); 
             }
-            while (nullRowsCount <= Defaults.IgnoreLastRowCount);
+            while (nullRowsCount <= _ignoreLastRowCount);
         }
         finally
         {
