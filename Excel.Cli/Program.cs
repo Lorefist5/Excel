@@ -1,38 +1,71 @@
-﻿
+﻿using CommandLine;
+using Excel.Cli.Generator;
+using OfficeOpenXml;
 
-using System;
-using System.CommandLine;
-using System.CommandLine.Invocation;
-using System.IO;
-using System.Threading.Tasks;
-
-class Program
+public class Program
 {
-    static async Task<int> Main(string[] args)
+    public class Options
     {
-        // Define a new root command with a description.
-        var rootCommand = new RootCommand("Writes a given sentence to a specified text file.")
-        {
-            // Define the first argument to capture the text file name.
-            new Argument<string>("fileName", "The name of the text file to write to."),
-            
-            // Define the second argument to capture the sentence to write.
-            new Argument<string>("sentence", "The sentence to write into the text file.")
-        };
+        [Option('n', "name", HelpText = "Model name.")]
+        public string Name { get; set; }
 
-        // Set the handler for the command.
-        rootCommand.Handler = new Command()
-        {
-            // Combine the file name with the current directory (or specify a path).
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+        [Option('p', "path", HelpText = "Path to the Excel file.")]
+        public string Path { get; set; }
 
-            // Write the sentence to the specified file.
-            await File.WriteAllTextAsync(filePath, sentence);
+        [Option('r', "row", Default = 1, HelpText = "Row where the header starts.")]
+        public int Row { get; set; }
 
-            Console.WriteLine($"The sentence has been written to {filePath}");
-        });
+        [Option('c', "column", Default = 1, HelpText = "Column where the header starts.")]
+        public int Column { get; set; }
+        [Option('o', "outputPath", HelpText = "The output path of the model")]
+        public string OutputPath { get; set; }
+        [Option('s', "sheetName", Default = "Sheet1",HelpText = "The name of the sheet")]
+        public string SheetName { get; set; }
 
-        // Parse the incoming args and invoke the handler.
-        return await rootCommand.InvokeAsync(args);
+        [Option('a', "allSheets", Default = false, HelpText = "Generate models for all sheets.")]
+        public bool AllSheets { get; set; }
+        [Option('f', "Fix", HelpText = "Fix or generate helper methods in Models.")]
+        public string FixModelPath { get; set; }
+    }
+
+    public static void Main(string[] args)
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+        Parser.Default.ParseArguments<Options>(args)
+            .WithParsed<Options>(o =>
+            {
+                try
+                {
+                    var creator = new ExcelModelCreator();
+
+
+                    if (!string.IsNullOrWhiteSpace(o.FixModelPath))
+                    {
+                        creator.GenerateProperties(o.FixModelPath);
+                        Console.WriteLine("Properties generated successfully.");
+                        return;
+                    }
+                    
+                    if (o.AllSheets)
+                    {
+                        var models = creator.CreateModelsForAllSheets(o.Path, o.Row, o.Column);
+                        foreach (var model in models)
+                        {
+                            File.WriteAllText($@"{o.OutputPath}\{model.Key}.cs", model.Value);
+                        }
+                    }
+                    else
+                    {
+                        var model = creator.CreateModel(o.Path, o.Name, o.SheetName, o.Row, o.Column);
+                        File.WriteAllText($@"{o.OutputPath}\{o.Name}.cs", model);
+                    }
+                    Console.WriteLine("Model(s) created successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                }
+            });
     }
 }
