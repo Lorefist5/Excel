@@ -9,14 +9,11 @@ public class Patient
 
     [Excel(Name = "Address", DefaultValue = "No address")]
     public string? PatientAddress { get; set;}
-    [Excel(Name = "Age", CaseSensitive = false)]
-    public int PatientAge { get; set;}
+    [Excel(Name = "Age", CaseSensitive = false, Type = typeof(int))]
+    public string PatientAge { get; set;}
     [Excel(Name = "Phone number")]
     public string PatientNumber { get; set; }
     public string PatientId { get; set; }
     
-    [Excel(IsProperty = false)]
-    public bool IsUnderAge { get => PatientAge <= 18; }
-    [Excel(IsReadProperty = false, IsWriteProperty = true)]
-    public bool IsAdult { get => PatientAge > 18; }
+
 }

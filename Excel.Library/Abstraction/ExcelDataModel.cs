@@ -9,21 +9,18 @@ public abstract class ExcelDataModel
     public virtual bool IsValid()
     {
         Type type = GetType();
-        var properties = type.GetProperties();
+        var properties = type.GetProperties().Where(p => p.GetCustomAttribute<ExcelAttribute>() != null && p.GetCustomAttribute<ExcelAttribute>()!.IsProperty != false).ToList();
 
         foreach (var property in properties)
         {
             var excelAttributes = property.GetCustomAttribute<ExcelAttribute>();
-            // If there's no ExcelAttribute, continue to the next property
-            if (excelAttributes == null || excelAttributes.IsProperty != true)
-                continue;
 
-            
+
             if (excelAttributes.Type != null)
             {
 
                 var value = property.GetValue(this);
-                if(value == null && !excelAttributes.CanBeNull) return false;
+                if (value == null && !excelAttributes.CanBeNull) return false;
 
                 if (value != null && !TryConvert(value, excelAttributes.Type))
                 {
@@ -34,7 +31,6 @@ public abstract class ExcelDataModel
 
         return true;
     }
-
     private bool TryConvert(object value, Type targetType)
     {
         try

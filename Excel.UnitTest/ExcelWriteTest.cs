@@ -20,7 +20,7 @@ public class ExcelWriteTest
             {
                 PatientName = "John Doe",
                 PatientAddress = "123 Main St",
-                PatientAge = 25,
+                PatientAge = "25",
                 PatientNumber = "555-1234",
                 PatientId = "ID001"
             },
@@ -28,7 +28,7 @@ public class ExcelWriteTest
             {
                 PatientName = "Jane Smith",
                 PatientAddress = "456 Elm St",
-                PatientAge = 30,
+                PatientAge = "30",
                 PatientNumber = "555-5678",
                 PatientId = "ID002"
             },
@@ -36,7 +36,7 @@ public class ExcelWriteTest
             {
                 PatientName = "Alice Johnson",
                 PatientAddress = null,
-                PatientAge = 17,
+                PatientAge = "17",
                 PatientNumber = "555-9012",
                 PatientId = "ID003"
             }
