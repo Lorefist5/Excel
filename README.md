@@ -100,11 +100,7 @@ This section provides examples of defining models for inventory management and c
 Explanation of Attributes
 -------------------------
 
-*   **Name:** Directly specifies the Excel column name associated with the property.
-*   **IgnoreCases:** Removes specific substrings from the property value when read, helpful for cleaning data entries.
-*   **CanBeNull:** Indicates whether the property can accept null values, which affects validation and parsing.
-*   **CaseSensitive:** Controls whether the matching of column names should be case-sensitive.
-*   **Type:** Designates the type to which the Excel cell value should be converted, aiding in proper data type handling.
+### <a href="https://github.com/Lorefist5/Excel/tree/master/Excel.Library/Attributes">All attributes here</a>
 
 Use Case: Reading Data
 ----------------------

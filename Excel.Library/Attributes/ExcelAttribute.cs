@@ -20,6 +20,7 @@ public class ExcelAttribute : Attribute
             IsWriteProperty = value;
         }
     }
+    public int? IndexOfHeader { get; set; } = null; // The index of the header that will be read this way it will only read the property in that index only
     public object? DefaultValue { get; set; } // If the value that is being written or being read is null it will replace it with this
     public bool CaseSensitive { get; set; } = true; // If the CaseSensitive is off it will read the columns without caring for the case
     public string[]? IgnoreCases { get; set; } //Ignores some cases, if you put "Los" or "The" it will delete themm ex. Los Santos will be = Santos

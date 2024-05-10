@@ -10,8 +10,17 @@
     <Description>Read excel packages with Static classes</Description>
     <PackageId>StaticExcel</PackageId>
     <Authors>Lorefist</Authors>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Lorefist5/Excel</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.0.10" />

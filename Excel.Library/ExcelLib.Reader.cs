@@ -27,11 +27,12 @@ public partial class ExcelLib
                 {
                     if (value.HeaderValue != null)
                     {
-                        PropertyInfo? propertyInfo = GetColumnAsProperty(properties, value.HeaderValue);
+                        
+                        PropertyInfo? propertyInfo = GetColumnAsProperty(properties, value);
+                        
                         if (propertyInfo != null)
                         {
                             propertyValues.Add(propertyInfo, value.Value);
-
                         }
                     }
 
@@ -83,9 +84,14 @@ public partial class ExcelLib
     }
 
 
-    private PropertyInfo? GetColumnAsProperty(List<ExcelProperty> excelProperties, string columnName)
+    private PropertyInfo? GetColumnAsProperty(List<ExcelProperty> excelProperties, RowValue columnValue)
     {
-        
+        string? columnName = columnValue.HeaderValue;
+        int columnIndex = columnValue.HeaderIndex;
+        if(columnName == null)
+        {
+            return null;
+        }
         ExcelProperty? property = excelProperties.FirstOrDefault(p =>
         {
             var excelAttribute = p.GetExcelAttributes();
@@ -94,10 +100,13 @@ public partial class ExcelLib
             bool caseSensitive = excelAttribute?.CaseSensitive ?? false;
             TrimMode trimMode = excelAttribute != null ? excelAttribute.TrimMode : TrimMode.FrontAndEnd;
 
+            if(excelAttribute != null && excelAttribute.IndexOfHeader == columnIndex)
+            {
+                return true;
+            }
             if(trimMode == TrimMode.FrontAndEnd)
             {
                 columnName = columnName.Trim();
-                
             }
             else if (trimMode == TrimMode.Front)
             {

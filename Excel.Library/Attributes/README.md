@@ -15,7 +15,8 @@ This section describes each property available in the `ExcelAttribute` class, pr
 
 ### **IndexOrder**
 - Sets the order in which properties are written to the Excel file when exporting data. Lower numbers are written first.
-
+## **Index of header**
+- Specifies the index of the header in the Excel file. This is useful when the header is in the same column in each excel you read.
 ### **DefaultValue**
 - Specifies a default value to use when the Excel cell is empty or null during import.
 

@@ -92,7 +92,7 @@ public class SheetIterator : IDisposable
                     sheetIterator.CurrentColumn = header.Key; 
                     object? cellValue = sheetIterator.GetCurrentValue();
                     string? currentHeaderCellValue = this[_firstRow, header.Key]!.ToString();
-                    rowData.Add(new RowValue() { HeaderValue = currentHeaderCellValue, Value = cellValue});
+                    rowData.Add(new RowValue() { HeaderValue = currentHeaderCellValue, HeaderIndex = header.Key, Value = cellValue});
 
                     if (cellValue != null)
                     {
