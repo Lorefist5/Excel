@@ -10,7 +10,7 @@ namespace Excel.Library;
 
 public partial class ExcelLib
 {
-    public List<T> ReadDataFrame<T>(string sheetName = "Sheet1", int firstRow = 1, int firstColumn = 1) where T : class, new()
+    public List<T> ReadDataFrame<T>(string sheetName, int firstRow = 1, int firstColumn = 1) where T : class, new()
     {
         EnsureExcelExists();
         EnsureSheetExists(_excelPackage,sheetName);
@@ -42,6 +42,79 @@ public partial class ExcelLib
 
             return results;
         }
+    }
+    public List<T> ReadDataFrame<T>(int firstRow = 1, int firstColumn = 1) where T : class, new()
+    {
+        List<T> largeDataFrame = new();
+        var type = typeof(T);
+
+        var excelSheetAttribute = type.GetCustomAttribute<ExcelSheetAttribute>();
+        if (excelSheetAttribute == null)
+        {
+            return ReadDataFrame<T>("Sheet1", firstRow, firstColumn);
+        }
+
+        // If ReadMultiple is true, read data from all specified sheets
+        if (excelSheetAttribute.ReadMultiple == true)
+        {
+            if (excelSheetAttribute.ReadingProperties != null)
+            {
+                foreach (string currentSheetName in excelSheetAttribute.ReadingProperties)
+                {
+                    if (this.SheetExists(_excelPackage, currentSheetName))
+                    {
+                        largeDataFrame.AddRange(ReadDataFrame<T>(currentSheetName, firstRow, firstColumn));
+                    }
+                }
+            }
+        }
+        else
+        {
+            // If ReadMultiple is false, read data from the first matching sheet
+            string sheetName = GetFirstMatchingSheetName<T>(excelSheetAttribute);
+            if (!string.IsNullOrEmpty(sheetName))
+            {
+                largeDataFrame.AddRange(ReadDataFrame<T>(sheetName, firstRow, firstColumn));
+            }
+        }
+        return largeDataFrame;
+    }
+
+    private string GetFirstMatchingSheetName<T>(ExcelSheetAttribute excelSheetAttribute) where T : class, new()
+    {
+        if (excelSheetAttribute.Index.HasValue)
+        {
+            // Check by index
+            int index = excelSheetAttribute.Index.Value;
+            if (index < _excelPackage.Workbook.Worksheets.Count)
+            {
+                var sheetAtIndex = _excelPackage.Workbook.Worksheets[index];
+                if (sheetAtIndex != null)
+                {
+                    return sheetAtIndex.Name;
+                }
+            }
+        }
+
+        if (!string.IsNullOrEmpty(excelSheetAttribute.Name) && this.SheetExists(_excelPackage, excelSheetAttribute.Name))
+        {
+            // Check by attribute name
+            return excelSheetAttribute.Name;
+        }
+
+        if (excelSheetAttribute.ReadingProperties != null)
+        {
+            // Check by reading properties
+            foreach (string propName in excelSheetAttribute.ReadingProperties)
+            {
+                if (this.SheetExists(_excelPackage, propName))
+                {
+                    return propName;
+                }
+            }
+        }
+
+        return string.Empty; // Return empty string if no matching sheet is found
     }
 
     private T PopulateData<T>(Dictionary<PropertyInfo, object?> rowValues) where T : class, new()

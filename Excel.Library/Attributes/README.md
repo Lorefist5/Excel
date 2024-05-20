@@ -15,8 +15,10 @@ This section describes each property available in the `ExcelAttribute` class, pr
 
 ### **IndexOrder**
 - Sets the order in which properties are written to the Excel file when exporting data. Lower numbers are written first.
-## **Index of header**
+
+### **Index of header**
 - Specifies the index of the header in the Excel file. This is useful when the header is in the same column in each excel you read.
+
 ### **DefaultValue**
 - Specifies a default value to use when the Excel cell is empty or null during import.
 
@@ -63,3 +65,19 @@ Describes how whitespace is managed for Excel cell values during data import.
 - **Front:** Trims whitespace from the beginning of the string.
 - **FrontAndEnd:** Trims whitespace from both ends of the string.
 - **All:** Removes all whitespace from the string.
+
+## ExcelSheetAttribute Properties
+
+This section describes each property available in the `ExcelSheetAttribute` class, providing examples of their application for data models.
+
+### **Name**
+- Specifies the exact sheet name in the Excel workbook for read and write properties.
+
+### **ReadingProperties**
+- When searching for the sheet, it will also check for all these names.
+
+### **ReadMultiple**
+- If set to `true`, the method will read multiple sheets and join them in a large dataset. If `false`, it will stop at the first sheet that it finds.
+
+### **Index**
+- The index of the sheet that will be read. This way, it will only read the sheet at that index.

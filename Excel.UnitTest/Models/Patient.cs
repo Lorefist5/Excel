@@ -2,6 +2,7 @@
 using Excel.Library.Enums;
 namespace Excel.UnitTest.Models;
 
+[ExcelSheet(Name = "Patient", ReadingProperties = ["Sheet1", "MySheetName", "TestSheet"], ReadMultiple = true)]
 public class Patient
 {
     [Excel(IgnoreCases = ["Los", "The"], ReadingProperties = ["Name","Patient name"], IndexOrder = 1, CaseSensitive = false, CaseStyle = CaseStyle.PascalCase)]
