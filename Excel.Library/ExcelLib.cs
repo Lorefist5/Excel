@@ -42,6 +42,10 @@ public partial class ExcelLib
     {
         _excelPackage.Save();
     }
+    public void SaveWithPassword(string password)
+    {
+        _excelPackage.SaveAs(new FileInfo(_excelPath), password);
+    }
     public string EnsureCorrectExtension(string path)
     {
         string newPath = path;
