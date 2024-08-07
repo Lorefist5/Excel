@@ -6,6 +6,7 @@ namespace Excel.Library;
 
 public partial class ExcelLib
 {
+    public string ExcelPath => _excelPath;
     private string _excelPath;
     private ExcelPackage _excelPackage;
     private int _ignoreHeaderCount;
