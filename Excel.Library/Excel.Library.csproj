@@ -10,7 +10,7 @@
     <Description>Read excel packages with Static classes</Description>
     <PackageId>StaticExcel</PackageId>
     <Authors>Lorefist</Authors>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Lorefist5/Excel</RepositoryUrl>
   </PropertyGroup>

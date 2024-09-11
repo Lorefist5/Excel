@@ -1,5 +1,6 @@
 ﻿using Excel.Library.Attributes;
 using Excel.Library.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace Excel.Library.Models;
@@ -22,7 +23,12 @@ public class ExcelProperty
             {
                 return GetExcelAttributes()!.Name!;
             }
-            return Property.Name;
+            else if (Property.GetCustomAttribute<ColumnAttribute>() != null)
+            {
+                return Property.GetCustomAttribute<ColumnAttribute>()!.Name!;
+            }
+            else
+                return Property.Name;
         }
     }
     public bool HasExcelProperties
@@ -31,11 +37,12 @@ public class ExcelProperty
     }
     public bool IsReadProperty
     {
-        get => Property.GetCustomAttribute<ExcelAttribute>()?.IsReadProperty != false; // Returns true if its null or IsPropery is true
+        get => Property.GetCustomAttribute<ExcelAttribute>()?.IsReadProperty != false || !string.IsNullOrEmpty(Property.GetCustomAttribute<ColumnAttribute>()?.Name); // Returns true if its null or IsPropery is true
     }
     public bool IsWriteProperty
     {
-        get => Property.GetCustomAttribute<ExcelAttribute>()?.IsWriteProperty != false;
+        get => Property.GetCustomAttribute<ExcelAttribute>()?.IsWriteProperty != false || !string.IsNullOrEmpty(Property.GetCustomAttribute<ColumnAttribute>()?.Name); // Returns true if its null or IsPropery is true
+
     }
     
     public ExcelAttribute? GetExcelAttributes()
